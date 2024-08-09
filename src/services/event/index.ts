@@ -1,4 +1,5 @@
 import Event, { EventInterface } from "../../models/event";
+import { VoteBaseInterface } from "../../models/vote";
 
 export async function getEventById(eventId: string) {
   try {
@@ -40,4 +41,14 @@ export async function createEvent(event: Partial<EventInterface>) {
   } catch (e) {
     throw e;
   }
+}
+
+export async function addVote(eventId: string, vote: VoteBaseInterface[]) {
+  let data = await Event.updateOne(
+    { _id: eventId },
+    {
+      votes: vote,
+    }
+  );
+  return data;
 }

@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import { VoteInterface, voteSchema } from "./vote";
+import { VoteBaseInterface, voteSchema } from "./vote";
 import { UserInterface } from "./user";
 
 export interface EventBaseInterface {
   name: string;
   dates: Date[];
-  votes: VoteInterface[];
+  votes: VoteBaseInterface[];
   createdBy: UserInterface["_id"];
 }
 

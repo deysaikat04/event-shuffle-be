@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { UserInterface } from "./user";
 
-export interface VoteInterface extends Document {
-  date: string;
-  people: Array<UserInterface["_id"]>;
+// Interfaces
+export interface VoteBaseInterface {
+  date: Date;
+  people: string[];
 }
 
 export const voteSchema = new Schema({
@@ -11,9 +11,9 @@ export const voteSchema = new Schema({
     type: Date,
     required: true,
   },
-  people: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  people: [{ type: String }],
 });
 
-const Vote = mongoose.model<VoteInterface>("Vote", voteSchema);
+const Vote = mongoose.model<VoteBaseInterface>("Vote", voteSchema);
 
 export default Vote;

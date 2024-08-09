@@ -4,9 +4,11 @@ import {
   createEvent,
   getEventById,
   getListOfEvents,
+  addVote,
 } from "../../services/event";
 import mongoose from "mongoose";
-import moment from "moment";
+import { VoteBaseInterface } from "../../models/vote";
+import { formatEventResponse } from "../../utils/formatEventResponse";
 
 export async function getAnEventHandler(req: Request, res: Response) {
   const eventIdSchema = Joi.object({
@@ -38,14 +40,11 @@ export async function getAnEventHandler(req: Request, res: Response) {
       });
     }
 
-    const response = {
-      id: eventId,
-      name: event.name,
-      dates: event.dates.map((aDate) => moment(aDate).format("YYYY-MM-DD")),
-      votes: event.votes,
-    };
-
-    return res.send(response);
+    const formattedResponse = formatEventResponse(event);
+    res.send({
+      success: true,
+      data: formattedResponse,
+    });
   } catch (error) {
     return res
       .status(500)
@@ -100,6 +99,90 @@ export async function getListOfEventsHandler(req: Request, res: Response) {
     return res.send({
       events: [...response],
     });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error occurred! Please try again." });
+  }
+}
+
+export async function addVoteToAnEventHandler(req: Request, res: Response) {
+  // validate params
+  const eventIdSchema = Joi.object({
+    eventId: Joi.string().required(),
+  });
+
+  const { value: eventIdData, error: eventIdError } = eventIdSchema.validate(
+    req.params
+  );
+
+  if (eventIdError) {
+    return res.status(400).json({
+      message: eventIdError,
+    });
+  }
+
+  try {
+    // check if event id exists
+    const { eventId } = eventIdData;
+
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        message: "Invalid event id",
+      });
+    }
+
+    const event = await getEventById(eventId);
+
+    if (!event) {
+      return res.status(404).json({
+        message: "No event found with the given id",
+      });
+    }
+
+    // validate payload
+    const voteSchema = Joi.object({
+      name: Joi.string().required(),
+      votes: Joi.array().items(Joi.date()).min(1).required(),
+    });
+
+    const { value: voteData, error } = voteSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).json({
+        message: error?.message,
+      });
+    }
+
+    let vote: VoteBaseInterface | null = null;
+    let allVotes: VoteBaseInterface[] | null = [...event.votes];
+
+    voteData.votes.forEach((date: Date) => {
+      vote = event.votes.find(
+        (v) => v.date.getTime() === date.getTime()
+      ) as VoteBaseInterface;
+
+      if (!vote) {
+        const newVote: VoteBaseInterface = { date, people: [voteData.name] };
+        allVotes.push(newVote);
+        vote = newVote;
+      }
+      if (!vote.people.includes(voteData.name)) {
+        vote.people.push(voteData.name);
+      }
+    });
+    let updateData = await addVote(eventId, allVotes);
+
+    if (updateData.modifiedCount === 1) {
+      var data = await getEventById(eventId);
+      const formattedResponse = formatEventResponse(data);
+      res.send({
+        success: true,
+        data: formattedResponse,
+      });
+    } else {
+      res.status(500).send("Server Error");
+    }
   } catch (error) {
     return res
       .status(500)
