@@ -70,3 +70,62 @@ export async function registerUserHandler(req: Request, res: Response) {
       .json({ message: "Error occurred! Please try again." });
   }
 }
+
+export async function loginUserHandler(req: Request, res: Response) {
+  // payload validation
+  const userSchema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).max(30).required(),
+  });
+
+  const { value: userData, error } = userSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({
+      message: error?.message,
+    });
+  }
+
+  const { email, password } = userData;
+
+  try {
+    // fetch user by email
+    let userByEmail = await getUserByEmail(email);
+
+    if (!userByEmail) {
+      return res.status(400).json({
+        message: "This email is not registered! Please signup to continue.",
+      });
+    }
+
+    // compare password
+    const isMatch = await bcrypt.compare(password, userByEmail.password);
+
+    if (!isMatch) {
+      return res
+        .status(400)
+        .json({ message: "Invalid Credential! Please try again." });
+    }
+
+    // generate token
+    const payload = {
+      user: {
+        id: userByEmail.id,
+      },
+    };
+    const SECRET = process.env.JWT_SECRET as string;
+
+    jwt.sign(payload, SECRET, { expiresIn: "1h" }, (err, token) => {
+      if (err) throw err;
+      res.json({
+        token,
+        name: userByEmail.name,
+        email,
+      });
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Error occurred! Please try again." });
+  }
+}
