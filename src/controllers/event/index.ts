@@ -9,6 +9,7 @@ import {
 import mongoose from "mongoose";
 import { VoteBaseInterface } from "../../models/vote";
 import { formatEventResponse } from "../../utils/formatEventResponse";
+import { formatDate } from "../../utils/formatDate";
 
 export async function getAnEventHandler(req: Request, res: Response) {
   const eventIdSchema = Joi.object({
@@ -187,5 +188,54 @@ export async function addVoteToAnEventHandler(req: Request, res: Response) {
     return res
       .status(500)
       .json({ message: "Error occurred! Please try again." });
+  }
+}
+
+export async function getSuitableDateByEventIdHandler(
+  req: Request,
+  res: Response
+) {
+  const eventIdSchema = Joi.object({
+    eventId: Joi.string().required(),
+  });
+
+  const { value: eventIdData, error } = eventIdSchema.validate(req.params);
+
+  if (error) {
+    return res.status(400).json({
+      message: error,
+    });
+  }
+
+  try {
+    const { eventId } = eventIdData;
+
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        message: "Invalid event id",
+      });
+    }
+    const event = await getEventById(req.params.eventId);
+
+    if (!event) return res.status(404).json({ error: "Event not found" });
+
+    const suitableDates = event.votes
+      .filter(
+        (vote) =>
+          vote.people.length ===
+          event.votes.reduce((max, v) => Math.max(max, v.people.length), 0)
+      )
+      .map((aDate) => ({
+        date: formatDate(aDate.date),
+        people: aDate.people,
+      }));
+
+    res.json({
+      id: eventId,
+      name: event.name,
+      suitableDates,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
   }
 }
