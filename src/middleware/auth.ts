@@ -3,10 +3,6 @@ import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 
 export const SECRET_KEY: Secret = process.env.JWT_SECRET || "";
 
-export interface CustomRequest extends Request {
-  user: string | JwtPayload;
-}
-
 export function auth(req: Request, res: Response, next: NextFunction) {
   // Get token from header
   const token = (
@@ -23,7 +19,7 @@ export function auth(req: Request, res: Response, next: NextFunction) {
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
     if (decoded) {
-      res.locals.user = decoded;
+      res.locals.auth = decoded;
     }
     return next();
   } catch (err) {
