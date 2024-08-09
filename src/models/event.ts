@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
-import { VoteInterface, voteSchema } from "./vote";
+import { VoteBaseInterface, voteSchema } from "./vote";
+import { UserInterface } from "./user";
 
 export interface EventBaseInterface {
   name: string;
   dates: Date[];
-  votes: VoteInterface[];
+  votes: VoteBaseInterface[];
+  createdBy: UserInterface["_id"];
 }
 
 export interface EventInterface extends EventBaseInterface, mongoose.Document {
@@ -24,6 +26,11 @@ const eventSchema = new mongoose.Schema(
         required: true,
       },
     ],
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     votes: {
       type: [voteSchema],
       default: [],
