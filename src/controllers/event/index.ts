@@ -33,7 +33,9 @@ export async function getAnEventHandler(req: Request, res: Response) {
     const event = await getEventById(eventId);
 
     if (!event) {
-      return res.sendStatus(404);
+      return res.status(404).json({
+        message: "No event found with the given id",
+      });
     }
 
     const response = {
