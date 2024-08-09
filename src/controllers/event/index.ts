@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
 import Joi from "joi";
-import { createEvent, getEventById } from "../../services/event";
+import {
+  createEvent,
+  getEventById,
+  getListOfEvents,
+} from "../../services/event";
 import mongoose from "mongoose";
 import moment from "moment";
 
-export async function getAnEvent(req: Request, res: Response) {
+export async function getAnEventHandler(req: Request, res: Response) {
   const eventIdSchema = Joi.object({
     eventId: Joi.string().required(),
   });
@@ -74,6 +78,25 @@ export async function createEventHandler(req: Request, res: Response) {
 
     return res.json({
       id: event._id,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error occurred! Please try again." });
+  }
+}
+
+export async function getListOfEventsHandler(req: Request, res: Response) {
+  try {
+    const event = await getListOfEvents();
+
+    const response = event.map((anEvent) => ({
+      id: anEvent._id as string,
+      name: anEvent.name,
+    }));
+
+    return res.send({
+      events: [...response],
     });
   } catch (error) {
     return res
