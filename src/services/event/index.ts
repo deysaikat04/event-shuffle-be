@@ -8,7 +8,7 @@ export async function getEventById(eventId: string) {
         _id: eventId,
       },
       {
-        _id: 0,
+        _id: 1,
         name: 1,
         dates: 1,
         votes: 1,
