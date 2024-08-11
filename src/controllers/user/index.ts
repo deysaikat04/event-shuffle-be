@@ -21,6 +21,7 @@ export async function registerUserHandler(req: Request, res: Response) {
 
   if (error) {
     return res.status(400).json({
+      success: false,
       message: error?.message,
     });
   }
@@ -32,6 +33,7 @@ export async function registerUserHandler(req: Request, res: Response) {
 
     if (userByEmail) {
       res.status(404).json({
+        success: false,
         message: "This email is already in use! Please use another email.",
       });
     } else {
@@ -58,6 +60,7 @@ export async function registerUserHandler(req: Request, res: Response) {
       jwt.sign(payload, SECRET, { expiresIn: "1h" }, (err, token) => {
         if (err) throw err;
         return res.status(201).json({
+          success: true,
           token,
           name,
           email,
@@ -82,6 +85,7 @@ export async function loginUserHandler(req: Request, res: Response) {
 
   if (error) {
     return res.status(400).json({
+      success: false,
       message: error?.message,
     });
   }
@@ -94,6 +98,7 @@ export async function loginUserHandler(req: Request, res: Response) {
 
     if (!userByEmail) {
       return res.status(400).json({
+        success: false,
         message: "This email is not registered! Please signup to continue.",
       });
     }
@@ -102,9 +107,10 @@ export async function loginUserHandler(req: Request, res: Response) {
     const isMatch = await bcrypt.compare(password, userByEmail.password);
 
     if (!isMatch) {
-      return res
-        .status(400)
-        .json({ message: "Invalid Credential! Please try again." });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Credential! Please try again.",
+      });
     }
 
     // generate token
@@ -118,6 +124,7 @@ export async function loginUserHandler(req: Request, res: Response) {
     jwt.sign(payload, SECRET, { expiresIn: "1h" }, (err, token) => {
       if (err) throw err;
       res.json({
+        success: true,
         token,
         name: userByEmail.name,
         email,
@@ -126,6 +133,6 @@ export async function loginUserHandler(req: Request, res: Response) {
   } catch (err) {
     return res
       .status(500)
-      .json({ message: "Error occurred! Please try again." });
+      .json({ success: false, message: "Error occurred! Please try again." });
   }
 }

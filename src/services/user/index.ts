@@ -4,7 +4,7 @@ export async function getUserByEmail(email: string) {
   try {
     const result = await User.findOne(
       { email },
-      { _id: 1, email: 1, password: 1 }
+      { _id: 1, name: 1, email: 1, password: 1 }
     );
     return result;
   } catch (e) {
