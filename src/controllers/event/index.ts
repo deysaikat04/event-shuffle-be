@@ -1,16 +1,22 @@
 import { Request, Response } from "express";
 import Joi from "joi";
+import mongoose from "mongoose";
 import {
   createEvent,
   getEventById,
   getListOfEvents,
   addVote,
 } from "../../services/event";
-import mongoose from "mongoose";
 import { VoteBaseInterface } from "../../models/vote";
 import { formatEventResponse } from "../../utils/formatEventResponse";
 import { formatDate } from "../../utils/formatDate";
 
+/**
+ * Fetch an event by id
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function getAnEventHandler(req: Request, res: Response) {
   const eventIdSchema = Joi.object({
     eventId: Joi.string().required(),
@@ -53,6 +59,12 @@ export async function getAnEventHandler(req: Request, res: Response) {
   }
 }
 
+/**
+ * Create an event
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function createEventHandler(req: Request, res: Response) {
   const eventSchema = Joi.object({
     name: Joi.string().required(),
@@ -88,6 +100,12 @@ export async function createEventHandler(req: Request, res: Response) {
   }
 }
 
+/**
+ * Get list of events
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function getListOfEventsHandler(req: Request, res: Response) {
   try {
     const event = await getListOfEvents();
@@ -107,6 +125,12 @@ export async function getListOfEventsHandler(req: Request, res: Response) {
   }
 }
 
+/**
+ * Add vote to an event
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function addVoteToAnEventHandler(req: Request, res: Response) {
   // validate params
   const eventIdSchema = Joi.object({
@@ -191,6 +215,12 @@ export async function addVoteToAnEventHandler(req: Request, res: Response) {
   }
 }
 
+/**
+ * Get suitable date by event id
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function getSuitableDateByEventIdHandler(
   req: Request,
   res: Response

@@ -10,16 +10,37 @@ root
 |    |──config
 |    |    ├──db.ts
 |    |──controllers
+|    |    ├──event
+|    |    |    ├──index.ts
+|    |    ├──user
+|    |    |    ├──index.ts
+|    |──middleware
+|    |    ├──auth.ts
 |    |──models
+|    |    ├──event.ts
+|    |    ├──user.ts
+|    |    ├──vote.ts
 |    |──routes
+|    |    ├──event
+|    |    |    ├──index.ts
+|    |    ├──user
+|    |    |    ├──index.ts
 |    |    ├──index.ts
+|    |──services
+|    |    ├──event
+|    |    |    ├──index.ts
+|    |    ├──user
+|    |    |    ├──index.ts
 |    |──utils
-|    |    ├──index.ts
+|    |    ├──formatDate.ts
+|    |    ├──formatEventResponse.ts
 |    |──tests
+|    |    ├──event.test.ts
 |    |──.env
 |    |──.env.example
 |    |──.gitignore
 |    |──index.ts
+|    |──jest.config.ts
 |    |──package.json
 |    |──package-lock.json
 |    |──README.md
@@ -29,10 +50,10 @@ root
 ## Project checklist
 
 - [x] Setup the base structure
-- [ ] Set up the root file
-- [ ] Set up models
-- [ ] Set up routes
-- [ ] Set up the service logics of the routes
+- [x] Set up the root file
+- [x] Set up models
+- [x] Set up routes
+- [x] Set up the service logics of the routes
 - [ ] Swagger documentation
-- [ ] Test cases
-- [ ] Smoke testing
+- [x] Test cases
+- [x] Smoke testing

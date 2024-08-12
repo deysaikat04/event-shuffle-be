@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
-import { createUser, getUserByEmail } from "../../services/user";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { UserInterface } from "../../models/user";
 import Joi from "joi";
+import { createUser, getUserByEmail } from "../../services/user";
+import { UserInterface } from "../../models/user";
 
+/**
+ * Register user
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function registerUserHandler(req: Request, res: Response) {
   // payload validation
   const userSchema = Joi.object({
@@ -74,6 +80,12 @@ export async function registerUserHandler(req: Request, res: Response) {
   }
 }
 
+/**
+ * Login user
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function loginUserHandler(req: Request, res: Response) {
   // payload validation
   const userSchema = Joi.object({

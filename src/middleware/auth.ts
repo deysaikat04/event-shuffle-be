@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { Secret, JwtPayload } from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 
 export const SECRET_KEY: Secret = process.env.JWT_SECRET || "";
 
@@ -8,7 +8,7 @@ export function auth(req: Request, res: Response, next: NextFunction) {
   const token = (
     req.header("authorization") || req.header("Authorization")
   )?.split(" ")[1];
-  // Check if not token
+  // Check if no token
   if (!token) {
     return res
       .status(401)
