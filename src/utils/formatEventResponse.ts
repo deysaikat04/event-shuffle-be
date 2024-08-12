@@ -3,6 +3,7 @@ import { formatDate } from "./formatDate";
 
 export const formatEventResponse = (event: EventInterface | null) => {
   return {
+    id: event?._id,
     name: event?.name,
     dates: event?.dates.map((aDate) => formatDate(aDate)),
     votes: event?.votes.map((aVote) => {
