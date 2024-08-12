@@ -47,6 +47,22 @@ root
 |    |──tsconfig.json
 ```
 
+## Available Scripts
+
+In the project directory, you can run:
+
+### `npm install`
+
+In Local developer mode, you can run:
+
+### `npm run start:dev`
+
+In Production mode, you can run:
+
+### `npm start`
+
+### `npm run test`
+
 ## Project checklist
 
 - [x] Setup the base structure

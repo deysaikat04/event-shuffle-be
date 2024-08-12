@@ -4,9 +4,9 @@
   "description": "Eventshuffle is an application to help scheduling events with friends in simplified way",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
     "build": "tsc",
     "test": "jest",
+    "start": "ts-node src/index.ts",
     "start:dev": "nodemon src/index.ts"
   },
   "keywords": [
