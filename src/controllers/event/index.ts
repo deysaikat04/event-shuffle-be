@@ -82,6 +82,16 @@ export async function createEventHandler(req: Request, res: Response) {
   try {
     const userId = res.locals.auth.user?.id;
 
+    const datesVal = eventData.dates.some(
+      (date: string) => new Date(date) < new Date()
+    );
+
+    if (datesVal) {
+      return res.status(400).json({
+        message: "Dates can not be past date",
+      });
+    }
+
     const event = await createEvent({ ...eventData, createdBy: userId });
 
     if (!event) {
